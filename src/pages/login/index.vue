@@ -57,8 +57,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { login } from "@/api";
-import { setToken } from "@/commom/token";
-import { uploadImage } from "@/commom";
+import { setToken } from "@/common/token";
+import { uploadImage } from "@/common";
 import { upload_url, static_url } from "@/utils/config";
 const agreePrivacy = ref(false);
 const avatarUrl = ref("");
