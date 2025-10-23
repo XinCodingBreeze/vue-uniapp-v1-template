@@ -1,0 +1,189 @@
+---
+alwaysApply: true
+---
+
+# Vue UniApp 项目开发规范
+
+## 项目技术栈
+
+- Vue 3 + TypeScript + Composition API
+- UniApp 跨平台开发框架
+- uView Plus UI 组件库
+- Tailwind CSS 样式框架
+- Vite 构建工具
+- Vue i18n 国际化
+- DayJS 时间处理库
+
+## 代码风格规范
+
+### TypeScript
+
+- 始终使用 TypeScript 编写代码，避免使用 `any` 类型
+- 优先使用 `interface` 定义对象类型，使用 `type` 定义联合类型或复杂类型
+- 为所有函数参数和返回值添加类型注解
+- 将类型定义统一放在 `src/types/global.d.ts` 或对应模块的类型文件中
+- 使用路径别名 `@/` 引用 src 目录下的文件
+
+### Vue 3 规范
+
+- 使用 `<script setup lang="ts">` 语法编写组件
+- 优先使用 Composition API（ref、reactive、computed、watch 等）
+- 使用 `defineProps`、`defineEmits` 定义组件 props 和事件，并提供完整的类型定义
+- 使用 `defineExpose` 暴露组件方法给父组件
+- 响应式变量命名清晰，避免使用单字母变量名
+- 将复杂逻辑抽离到 composables 中复用
+
+### 组件开发规范
+
+- 组件文件名使用 PascalCase，如 `MyComponent.vue`
+- 组件目录结构：`components/ComponentName/index.vue`
+- 自定义组件需要在 easycom 自动导入配置中注册，或在使用处手动导入
+- 优先使用 uView Plus 提供的 UI 组件，自定义组件命名避免与 uView 组件冲突
+- 组件 props 必须定义默认值和类型
+- 组件必须有明确的职责，避免过度复杂的组件
+
+### UniApp 特定规范
+
+- 页面文件统一放在 `src/pages` 目录下，使用目录方式组织：`pages/pageName/index.vue`
+- 新增页面必须在 `src/pages.json` 中配置路由和页面样式
+- 使用 `uni.xxx` API 时需要注意多端兼容性
+- 避免使用平台特定的 API，如必须使用需添加条件编译注释
+- 使用 UniApp 生命周期钩子：`onLoad`、`onShow`、`onReady` 等
+- 页面跳转使用 `uni.navigateTo`、`uni.redirectTo` 等 API
+- 使用 `rpx` 作为主要单位，确保多端适配
+
+### 样式规范
+
+- 优先使用 Tailwind CSS 工具类
+- 自定义样式使用 `<style lang="scss" scoped>`
+- 全局样式放在 `src/uni.scss` 或 `src/App.vue` 中
+- 使用 CSS 变量管理主题色和通用样式
+- 避免使用内联样式，除非是动态计算的样式
+- 样式类命名使用 BEM 规范或语义化命名
+
+### 目录结构规范
+
+```
+src/
+├── api/           # API 接口定义
+├── common/        # 公共工具函数
+├── components/    # 通用组件
+├── pages/         # 页面文件
+├── static/        # 静态资源
+├── store/         # 状态管理
+├── types/         # TypeScript 类型定义
+├── utils/         # 工具函数
+└── uni_modules/   # UniApp 插件
+```
+
+### API 调用规范
+
+- 所有 API 接口统一在 `src/api` 目录下定义
+- 使用封装好的 `https.ts` 进行网络请求
+- API 函数必须定义返回值类型
+- 错误处理统一在拦截器中处理
+- 接口调用示例：
+
+```typescript
+import { request } from "@/utils/https";
+
+export const getUserInfo = (id: string): Promise<UserInfo> => {
+  return request({
+    url: `/user/${id}`,
+    method: "GET",
+  });
+};
+```
+
+### 状态管理规范
+
+- 使用 Pinia 或 Vuex 进行全局状态管理
+- Store 模块化，按业务功能拆分
+- Store 文件放在 `src/store/modules` 目录
+- 避免在 store 中存储过多数据，仅存储需要共享的状态
+
+### Token 和权限管理
+
+- Token 相关操作统一使用 `src/common/token.ts`
+- 页面权限控制在路由守卫或页面 `onLoad` 中处理
+- 敏感操作需要验证用户登录状态
+
+### 命名规范
+
+- **文件命名**：组件使用 PascalCase，工具函数文件使用 camelCase
+- **变量命名**：使用 camelCase
+- **常量命名**：使用 UPPER_SNAKE_CASE
+- **类型命名**：使用 PascalCase，接口以 `I` 开头（可选）
+- **函数命名**：使用动词开头，清晰表达函数用途
+
+### 代码质量
+
+- 使用 ESLint 和 Prettier 保持代码风格一致
+- 删除无用的 console.log，生产环境代码不应包含调试信息
+- 避免重复代码，提取公共逻辑到工具函数或 composables
+- 添加必要的注释，特别是复杂逻辑和业务规则
+- 函数保持简洁，单一职责，建议不超过 50 行
+
+### 性能优化
+
+- 使用 `computed` 缓存计算结果
+- 大列表使用虚拟滚动
+- 图片使用懒加载，统一使用 `newImage` 组件
+- 避免在 `watch` 中执行耗时操作
+- 合理使用 `v-if` 和 `v-show`
+
+### 错误处理
+
+- 使用 try-catch 包裹可能出错的代码
+- 给用户友好的错误提示，使用 `uni.showToast` 或 `uni.showModal`
+- 记录关键错误日志，便于问题排查
+
+### 多端兼容
+
+- 使用条件编译处理不同平台的差异
+
+```vue
+<!-- #ifdef H5 -->
+<view>H5 特有内容</view>
+<!-- #endif -->
+
+<!-- #ifdef MP-WEIXIN -->
+<view>微信小程序特有内容</view>
+<!-- #endif -->
+```
+
+- 测试时至少验证 H5 和微信小程序两个平台
+
+### 国际化
+
+- 使用 vue-i18n 处理多语言
+- 文案统一在语言包中配置，避免硬编码
+- 语言切换后需要刷新相关页面
+
+### Git 提交规范
+
+- 使用语义化提交信息：
+  - `feat`: 新功能
+  - `fix`: 修复 bug
+  - `docs`: 文档更新
+  - `style`: 代码格式调整
+  - `refactor`: 重构
+  - `perf`: 性能优化
+  - `test`: 测试相关
+  - `chore`: 构建或辅助工具变动
+
+## 常用命令
+
+- `npm run dev:h5` - 启动 H5 开发服务器
+- `npm run dev:mp-weixin` - 启动微信小程序开发
+- `npm run build:h5` - 构建 H5 生产版本
+- `npm run build:mp-weixin` - 构建微信小程序生产版本
+- `npm run type-check` - TypeScript 类型检查
+
+## 注意事项
+
+- 开发前确认目标平台，不同平台可能有不同限制
+- 微信小程序包大小有限制，注意优化资源
+- 使用 `uni.` 开头的 API 确保跨平台兼容
+- 图片资源优先使用网络图片或压缩后的本地图片
+- 及时更新 UniApp 和相关依赖版本，关注官方更新日志
