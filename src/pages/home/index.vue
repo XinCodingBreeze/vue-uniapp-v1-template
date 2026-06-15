@@ -12,20 +12,17 @@
       <!-- 图片组件示例 -->
       <view class="demo-item">
         <text class="demo-label">图片组件:</text>
-        <new-image
-          v-model="demoImageUrl"
-          :style="{ width: 200, height: 200, borderRadius: 16 }"
-        />
+        <new-image v-model="demoImageUrl" :style="{ width: 200, height: 200, borderRadius: 16 }" />
       </view>
 
       <!-- 表格组件示例 -->
       <view class="demo-item">
         <text class="demo-label">表格组件:</text>
-        <new-table
-          :tableConfig="tableConfig"
-          :tableData="tableData"
-          @selection-change="onSelectionChange"
-        />
+        <new-table :tableConfig="tableConfig" :tableData="tableData" @selection-change="onSelectionChange" />
+      </view>
+      <view class="demo-item">
+        <text class="demo-label">输入框组件:</text>
+        <input v-model="demoInputValue" placeholder="请输入内容" />
       </view>
     </view>
   </view>
@@ -39,7 +36,7 @@ import type { TableConfig } from "@/types/global";
 
 // 示例数据
 const demoImageUrl = ref("https://picsum.photos/400/400");
-
+const demoInputValue = ref("");
 const tableConfig: TableConfig = {
   columns: [
     { prop: "name", label: "姓名", width: "100" },
